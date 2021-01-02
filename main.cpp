@@ -7,17 +7,25 @@
 
 int main() {
 
-    char outputpath[] = "C:\\Users\\popcorn\\Desktop\\0\\UniTo\\Tesi\\Pugliese\\Modelli Probabilistici\\Gillespie_algorithm\\OutputFIle\\gillespie.csv";
-    char inputpath[] = "C:\\Users\\popcorn\\Desktop\\0\\UniTo\\Tesi\\Pugliese\\Modelli Probabilistici\\Gillespie_algorithm\\OutputFIle\\InputGillespie.txt";
+
+    std::string inputpath = "../InputOutput/Input_Gillespie_Household.txt";
+    std::string outputpath = "../InputOutput/gillespie.csv";
+
 
     //Number of steps
     int nSteps;
 
-    //Population
-    int N;
+    // number of Households
+    int number_of_Households;
+
+    // number of people in one Household
+    int number_of_people_in_one_Household;
 
     //S->E
     double beta;
+
+    //S->E in the household
+    double betaH;
 
     // E-> I
     double ny;
@@ -26,63 +34,22 @@ int main() {
     double gamma;
 
 
-    std::string line;
-    std::ifstream infile(inputpath);
-    if (infile.is_open()) {
+    read_Parameters_From_File(inputpath, nSteps, number_of_Households, number_of_people_in_one_Household, beta, betaH,
+                              ny, gamma);
 
-        getline(infile, line, ':');
-        getline(infile, line);
-        nSteps = std::stoi(line);
+    int N = number_of_Households * number_of_people_in_one_Household;
 
-        getline(infile, line, ':');
-        getline(infile, line);
-        N = std::stoi(line);
-
-        getline(infile, line, ':');
-        getline(infile, line);
-        beta = std::stod(line);
-
-        getline(infile, line, ':');
-        getline(infile, line);
-        ny = std::stod(line);
-
-        getline(infile, line, ':');
-        getline(infile, line);
-        gamma = std::stod(line);
-
-        infile.close();
-    } else std::cout << "Unable to open file";
-
-    /*
-    std::cout<<"nSteps: "<<nSteps<<'\n';
-    std::cout<<"N: "<<N<<'\n';
-    std::cout<<"beta: "<<beta<<'\n';
-    std::cout<<"ny: "<<ny<<'\n';
-    std::cout<<"gamma: "<<gamma<<'\n';
-    */
-
-
-
-
-    std::vector<double> temp;
 
     // Gillespie algorithm.
     // SEIR is a matrix that contains the data relative to the number of infected recovred etc..
     // tmp is the vector of the time (each entry is the time at which an event occurred)
-    std::vector<std::vector<int> > SEIR = gillespie_for_Households(nSteps, N, beta, ny, gamma, temp);
+    std::vector<double> temp;
+    std::vector<std::vector<int> > SEIR = gillespie_for_Households(nSteps, N, number_of_Households,
+                                                                   number_of_people_in_one_Household, beta, betaH, ny,
+                                                                   gamma, temp);
 
-    // writing on the csv file
-    std::ofstream outfile(outputpath);
-    if (!outfile.is_open()) {
-        std::cout << "Unable to open file";
-    } else {
-        for (int i = 0; i < SEIR[0].size(); i++) {
 
-            outfile << SEIR[0][i] << ",\t" << SEIR[1][i] << ",\t" << SEIR[2][i] << ",\t" << SEIR[3][i] << ",\t"
-                    << temp[i] << "\n";
-        }
-        outfile.close();
-    }
+    write_the_csv_file(outputpath, SEIR, temp);
     return 0;
 
 }
