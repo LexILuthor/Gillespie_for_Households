@@ -21,7 +21,6 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
 
     //setting the initial conditions with N-1 susceptible 1 infected and zero exposed and recovered
     initializeSEIRandTemp(SEIR, temp, N);
-    double lambda = 1;
 
     //the
     int sumsHiH = number_of_people_in_one_Household - 1;
@@ -41,7 +40,8 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
 
     // here we simulate the process
     int j = 1;
-    while (j < nSteps && lambda != 0) {
+    while (j < nSteps) {
+        std::cout<<j<<"\n";
         //number of Susceptible
         int s = SEIR[0][j - 1];
 
@@ -68,7 +68,10 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
         double seH = betaH * sumsHiH / number_of_people_in_one_Household;
         double ei = ny * e;
         double ir = gamma * i;
-        lambda = (se + seH + ei + ir);
+        double lambda = (se + seH + ei + ir);
+        if(lambda==0){
+            break;
+        }
         se = se / lambda;
         seH = seH / lambda;
         ei = ei / lambda;
@@ -86,7 +89,7 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
         if (tmp < se) {
             //new Exposed from a contact outside the household
             new_Exposed_outside_the_household(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
-        } else if (se + seH) {
+        } else if (tmp < (se + seH)) {
             //new Exposed from a contact within the household
             new_exposed_inside_the_household(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
         } else if (tmp < (se + seH + ei)) {

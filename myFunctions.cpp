@@ -21,10 +21,8 @@ void new_Exposed_outside_the_household(std::vector<std::vector<int> > &SEIR,
     //update households with susceptible based only on how many susceptible an house has
     //update also sumsHiH
     // generate a random number and decide which household will change
-    std::default_random_engine generator(0);
-    std::uniform_real_distribution<double> distribution(0.0, SEIR[0][j - 1]);
 
-    double randomUnif = distribution(generator);
+    double randomUnif = generateUnif_from_zeroExcluded_to(SEIR[0][j - 1]);
     int size = household_with_Susceptible_Infected_Exposed[0].size();
     int cumulativeSum = 0;
 
@@ -34,7 +32,7 @@ void new_Exposed_outside_the_household(std::vector<std::vector<int> > &SEIR,
 
             for (int s = 0; s < size - (e + i); s++) {
                 cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * s);
-                if (randomUnif <= cumulativeSum ) {
+                if (randomUnif <= cumulativeSum) {
                     //allora abbiamo estratto il numero (s,i,e)
                     household_with_Susceptible_Infected_Exposed[s][i][e]--;
                     household_with_Susceptible_Infected_Exposed[s - 1][i][e + 1]++;
@@ -63,10 +61,7 @@ void new_exposed_inside_the_household(std::vector<std::vector<int>> &SEIR,
     //update households with susceptible based on how many susceptible and infected an house has
     //update also sumsHiH
     // generate a random number and decide which household will change
-    std::default_random_engine generator(0);
-    std::uniform_real_distribution<double> distribution(0.0, sumsHiH);
-
-    double randomUnif = distribution(generator);
+    double randomUnif = generateUnif_from_zeroExcluded_to(sumsHiH);
     int size = household_with_Susceptible_Infected_Exposed[0].size();
     int cumulativeSum = 0;
 
@@ -88,7 +83,6 @@ void new_exposed_inside_the_household(std::vector<std::vector<int>> &SEIR,
                     goto skip;
 
                 }
-                cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * s * i);
 
             }
         }
@@ -107,10 +101,9 @@ void new_Infected(std::vector<std::vector<int> > &SEIR,
     //update households with susceptible based only on how many exposed an house has
     //update also sumsHiH
     // generate a random number and decide which household will change
-    std::default_random_engine generator(0);
-    std::uniform_real_distribution<double> distribution(0.0, SEIR[1][j - 1]);
 
-    double randomUnif = distribution(generator);
+    double randomUnif = generateUnif_from_zeroExcluded_to(SEIR[1][j - 1]);
+
     int size = household_with_Susceptible_Infected_Exposed[0].size();
     int cumulativeSum = 0;
 
@@ -148,10 +141,8 @@ void new_Recovered(std::vector<std::vector<int> > &SEIR,
     //update households with susceptible based only on how many infected an house has
     //update also sumsHiH
     // generate a random number and decide which household will change
-    std::default_random_engine generator(0);
-    std::uniform_real_distribution<double> distribution(0.0, SEIR[2][j - 1]);
 
-    double randomUnif = distribution(generator);
+    double randomUnif = generateUnif_from_zeroExcluded_to(SEIR[2][j - 1]);
     int size = household_with_Susceptible_Infected_Exposed[0].size();
     int cumulativeSum = 0;
 
@@ -160,8 +151,8 @@ void new_Recovered(std::vector<std::vector<int> > &SEIR,
         for (int i = 0; i < size - e; i++) {
 
             for (int s = 0; s < size - (e + i); s++) {
-                if (randomUnif <= cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * i) &&
-                    randomUnif > cumulativeSum) {
+                cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * i);
+                if (randomUnif <= cumulativeSum) {
                     //allora abbiamo estratto il numero (s,i,e)
                     household_with_Susceptible_Infected_Exposed[s][i][e]--;
                     household_with_Susceptible_Infected_Exposed[s][i - 1][e]++;
@@ -172,7 +163,7 @@ void new_Recovered(std::vector<std::vector<int> > &SEIR,
                     goto skip;
 
                 }
-                cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * i);
+
             }
         }
     }
@@ -259,4 +250,17 @@ void initialize_household_with_Susceptible_Infected_Exposed(
         int number_of_Households, int number_of_people_in_one_Household) {
     household_with_Susceptible_Infected_Exposed[number_of_people_in_one_Household][0][0] = number_of_Households - 1;
     household_with_Susceptible_Infected_Exposed[number_of_people_in_one_Household - 1][1][0] = 1;
+}
+
+
+double generateUnif_from_zeroExcluded_to(double to) {
+    std::default_random_engine generator(0);
+    std::uniform_real_distribution<double> uniform_distribution(0.0, to);
+
+    double randomUnif = uniform_distribution(generator);
+    while (randomUnif == 0) {
+        uniform_distribution.reset();
+        randomUnif = uniform_distribution(generator);
+    }
+    return randomUnif;
 }

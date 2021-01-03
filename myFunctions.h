@@ -36,3 +36,5 @@ void initialize_household_with_Susceptible_Infected_Exposed(
         std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
         int number_of_Households,
         int number_of_people_in_one_Household);
+
+double generateUnif_from_zeroExcluded_to(double to);
