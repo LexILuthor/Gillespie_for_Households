@@ -41,7 +41,7 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
     // here we simulate the process
     int j = 1;
     while (j < nSteps) {
-        std::cout<<j<<"\n";
+        std::cout << j << "\n";
         //number of Susceptible
         int s = SEIR[0][j - 1];
 
@@ -69,7 +69,7 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
         double ei = ny * e;
         double ir = gamma * i;
         double lambda = (se + seH + ei + ir);
-        if(lambda==0){
+        if (lambda == 0) {
             break;
         }
         se = se / lambda;
