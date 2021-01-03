@@ -9,7 +9,7 @@ int main() {
 
 
     std::string inputpath = "../InputOutput/Input_Gillespie_Household.txt";
-    std::string outputpath = "../InputOutput/gillespie.csv";
+    std::string outputpath = "../InputOutput/gillespie_Household.csv";
 
 
     //Number of steps

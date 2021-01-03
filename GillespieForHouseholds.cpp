@@ -24,8 +24,7 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
     double lambda = 1;
 
     //the
-    int sumsHiH =
-            (number_of_Households - 1) * number_of_people_in_one_Household + (number_of_people_in_one_Household - 1);
+    int sumsHiH = number_of_people_in_one_Household - 1;
 
 
     //the matrix "household_with_Susceptible_Infected_Exposed" will contain in the position (i,j) the number of households with i susceptible people and j infected people
@@ -65,6 +64,7 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
         // compute the parameter lambda of the exponential and the probabilities of
         // S->E, E->I, I->R
         double se = beta * s * i * move;
+        //problem here what do we divde for?
         double seH = betaH * sumsHiH / number_of_people_in_one_Household;
         double ei = ny * e;
         double ir = gamma * i;

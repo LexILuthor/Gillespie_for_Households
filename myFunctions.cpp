@@ -21,7 +21,7 @@ void new_Exposed_outside_the_household(std::vector<std::vector<int> > &SEIR,
     //update households with susceptible based only on how many susceptible an house has
     //update also sumsHiH
     // generate a random number and decide which household will change
-    std::default_random_engine generator;
+    std::default_random_engine generator(0);
     std::uniform_real_distribution<double> distribution(0.0, SEIR[0][j - 1]);
 
     double randomUnif = distribution(generator);
@@ -68,7 +68,7 @@ void new_exposed_inside_the_household(std::vector<std::vector<int>> &SEIR,
     //update households with susceptible based on how many susceptible and infected an house has
     //update also sumsHiH
     // generate a random number and decide which household will change
-    std::default_random_engine generator;
+    std::default_random_engine generator(0);
     std::uniform_real_distribution<double> distribution(0.0, sumsHiH);
 
     double randomUnif = distribution(generator);
@@ -117,7 +117,7 @@ void new_Infected(std::vector<std::vector<int> > &SEIR,
     //update households with susceptible based only on how many exposed an house has
     //update also sumsHiH
     // generate a random number and decide which household will change
-    std::default_random_engine generator;
+    std::default_random_engine generator(0);
     std::uniform_real_distribution<double> distribution(0.0, SEIR[1][j - 1]);
 
     double randomUnif = distribution(generator);
@@ -163,7 +163,7 @@ void new_Recovered(std::vector<std::vector<int> > &SEIR,
     //update households with susceptible based only on how many infected an house has
     //update also sumsHiH
     // generate a random number and decide which household will change
-    std::default_random_engine generator;
+    std::default_random_engine generator(0);
     std::uniform_real_distribution<double> distribution(0.0, SEIR[2][j - 1]);
 
     double randomUnif = distribution(generator);
