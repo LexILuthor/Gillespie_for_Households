@@ -25,7 +25,6 @@ void new_Exposed_outside_the_household(std::vector<std::vector<int> > &SEIR,
     std::uniform_real_distribution<double> distribution(0.0, SEIR[0][j - 1]);
 
     double randomUnif = distribution(generator);
-    int prec[3] = {0, 0, 0};
     int size = household_with_Susceptible_Infected_Exposed[0].size();
     int cumulativeSum = 0;
 
@@ -34,22 +33,18 @@ void new_Exposed_outside_the_household(std::vector<std::vector<int> > &SEIR,
         for (int i = 0; i < size - e; i++) {
 
             for (int s = 0; s < size - (e + i); s++) {
-                if (randomUnif <= cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * s) &&
-                    randomUnif > cumulativeSum) {
-                    //allora abbiamo estratto il numero (prec[0], prec[1],prec[2])
-                    household_with_Susceptible_Infected_Exposed[prec[0]][prec[1]][prec[2]]--;
-                    household_with_Susceptible_Infected_Exposed[prec[0] - 1][prec[1]][prec[2] + 1]++;
+                cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * s);
+                if (randomUnif <= cumulativeSum ) {
+                    //allora abbiamo estratto il numero (s,i,e)
+                    household_with_Susceptible_Infected_Exposed[s][i][e]--;
+                    household_with_Susceptible_Infected_Exposed[s - 1][i][e + 1]++;
 
                     // this is the rewrite of:
-                    // sumsHiH = sumsHiH - (prec[0] * prec[1]) + ((prec[0] - 1) * prec[1] )
-                    sumsHiH = sumsHiH - prec[1];
+                    // sumsHiH = sumsHiH - (s * i) + ((s - 1) * i )
+                    sumsHiH = sumsHiH - i;
                     goto skip;
 
                 }
-                cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * s);
-                prec[0] = s;
-                prec[1] = i;
-                prec[2] = e;
             }
         }
     }
@@ -72,7 +67,6 @@ void new_exposed_inside_the_household(std::vector<std::vector<int>> &SEIR,
     std::uniform_real_distribution<double> distribution(0.0, sumsHiH);
 
     double randomUnif = distribution(generator);
-    int prec[3] = {0, 0, 0};
     int size = household_with_Susceptible_Infected_Exposed[0].size();
     int cumulativeSum = 0;
 
@@ -81,25 +75,21 @@ void new_exposed_inside_the_household(std::vector<std::vector<int>> &SEIR,
         for (int i = 0; i < size - e; i++) {
 
             for (int s = 0; s < size - (e + i); s++) {
+                cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * s * i);
+                if (randomUnif <= cumulativeSum) {
 
-                if (randomUnif <=
-                    cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * s * i) &&
-                    randomUnif > cumulativeSum) {
-
-                    //allora abbiamo estratto il numero (prec[0], prec[1],prec[2])
-                    household_with_Susceptible_Infected_Exposed[prec[0]][prec[1]][prec[2]]--;
-                    household_with_Susceptible_Infected_Exposed[prec[0] - 1][prec[1]][prec[2] + 1]++;
+                    //allora abbiamo estratto il numero (s,i,e)
+                    household_with_Susceptible_Infected_Exposed[s][i][e]--;
+                    household_with_Susceptible_Infected_Exposed[s - 1][i][e + 1]++;
 
                     // this is the rewrite of:
-                    // sumsHiH = sumsHiH - (prec[0] * prec[1]) + ((prec[0] - 1) * prec[1] )
-                    sumsHiH = sumsHiH - prec[1];
+                    // sumsHiH = sumsHiH - (s * i) + ((s - 1) * i )
+                    sumsHiH = sumsHiH - i;
                     goto skip;
 
                 }
                 cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * s * i);
-                prec[0] = s;
-                prec[1] = i;
-                prec[2] = e;
+
             }
         }
     }
@@ -121,7 +111,6 @@ void new_Infected(std::vector<std::vector<int> > &SEIR,
     std::uniform_real_distribution<double> distribution(0.0, SEIR[1][j - 1]);
 
     double randomUnif = distribution(generator);
-    int prec[3] = {0, 0, 0};
     int size = household_with_Susceptible_Infected_Exposed[0].size();
     int cumulativeSum = 0;
 
@@ -130,22 +119,18 @@ void new_Infected(std::vector<std::vector<int> > &SEIR,
         for (int i = 0; i < size - e; i++) {
 
             for (int s = 0; s < size - (e + i); s++) {
-                if (randomUnif <= cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * e) &&
-                    randomUnif > cumulativeSum) {
-                    //allora abbiamo estratto il numero (prec[0], prec[1],prec[2])
-                    household_with_Susceptible_Infected_Exposed[prec[0]][prec[1]][prec[2]]--;
-                    household_with_Susceptible_Infected_Exposed[prec[0]][prec[1] + 1][prec[2] - 1]++;
+                cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * e);
+                if (randomUnif <= cumulativeSum) {
+                    //allora abbiamo estratto il numero (s, i,e)
+                    household_with_Susceptible_Infected_Exposed[s][i][e]--;
+                    household_with_Susceptible_Infected_Exposed[s][i + 1][e - 1]++;
 
                     // this is the rewrite of:
-                    // sumsHiH = sumsHiH - (prec[0] * prec[1]) + (prec[0] * (prec[1]+1) )
-                    sumsHiH = sumsHiH - prec[0];
+                    // sumsHiH = sumsHiH - (s * i) + (s * (i+1) )
+                    sumsHiH = sumsHiH + s;
                     goto skip;
 
                 }
-                cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * e);
-                prec[0] = s;
-                prec[1] = i;
-                prec[2] = e;
             }
         }
     }
@@ -167,7 +152,6 @@ void new_Recovered(std::vector<std::vector<int> > &SEIR,
     std::uniform_real_distribution<double> distribution(0.0, SEIR[2][j - 1]);
 
     double randomUnif = distribution(generator);
-    int prec[3] = {0, 0, 0};
     int size = household_with_Susceptible_Infected_Exposed[0].size();
     int cumulativeSum = 0;
 
@@ -178,20 +162,17 @@ void new_Recovered(std::vector<std::vector<int> > &SEIR,
             for (int s = 0; s < size - (e + i); s++) {
                 if (randomUnif <= cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * i) &&
                     randomUnif > cumulativeSum) {
-                    //allora abbiamo estratto il numero (prec[0], prec[1],prec[2])
-                    household_with_Susceptible_Infected_Exposed[prec[0]][prec[1]][prec[2]]--;
-                    household_with_Susceptible_Infected_Exposed[prec[0]][prec[1] - 1][prec[2]]++;
+                    //allora abbiamo estratto il numero (s,i,e)
+                    household_with_Susceptible_Infected_Exposed[s][i][e]--;
+                    household_with_Susceptible_Infected_Exposed[s][i - 1][e]++;
 
                     // this is the rewrite of:
                     // sumsHiH = sumsHiH - (prec[0] * prec[1]) + (prec[0] * (prec[1]-1) )
-                    sumsHiH = sumsHiH + prec[0];
+                    sumsHiH = sumsHiH - s;
                     goto skip;
 
                 }
                 cumulativeSum = cumulativeSum + (household_with_Susceptible_Infected_Exposed[s][i][e] * i);
-                prec[0] = s;
-                prec[1] = i;
-                prec[2] = e;
             }
         }
     }
