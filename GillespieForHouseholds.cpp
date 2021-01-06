@@ -22,20 +22,20 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
     //setting the initial conditions with N-1 susceptible 1 infected and zero exposed and recovered
     initializeSEIRandTemp(SEIR, temp, N);
 
-    //the
+    //the sum of (number of susceptible)*(number of infected) over all household
     int sumsHiH = number_of_people_in_one_Household - 1;
 
 
-    //the matrix "household_with_Susceptible_Infected_Exposed" will contain in the position (i,j) the number of households with i susceptible people and j infected people
+    //the matrix "household_with_Susceptible_Infected_Exposed" will contain in the position [s,i,e] the number of households with i susceptible people, i infected and e exposed
     std::vector<std::vector<std::vector<int>>> household_with_Susceptible_Infected_Exposed(
             number_of_people_in_one_Household + 1, std::vector<std::vector<int>>(number_of_people_in_one_Household + 1,
                                                                                  std::vector<int>(
                                                                                          number_of_people_in_one_Household +
                                                                                          1, 0)));
+
     //setting the initial condition of the matrix "household_with_Susceptible_Infected_Exposed"
     initialize_household_with_Susceptible_Infected_Exposed(household_with_Susceptible_Infected_Exposed,
-                                                           number_of_Households,
-                                                           number_of_people_in_one_Household);
+                                                           number_of_Households, number_of_people_in_one_Household);
 
 
     // here we simulate the process
@@ -63,7 +63,6 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
         // compute the parameter lambda of the exponential and the probabilities of
         // S->E, E->I, I->R
         double se = beta * s * i * move;
-        //problem here what do we divde for?
         double seH = betaH * sumsHiH / number_of_people_in_one_Household;
         double ei = ny * e;
         double ir = gamma * i;

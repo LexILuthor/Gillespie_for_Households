@@ -1,7 +1,5 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
-#include<cstdlib>
 #include "myFunctions.h"
 #include "GillespieForHouseholds.h"
 
