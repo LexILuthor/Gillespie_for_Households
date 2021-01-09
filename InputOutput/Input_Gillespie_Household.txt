@@ -1,5 +1,5 @@
 NumberOfSteps: 10000000
-number_of_Households: 1000
+number_of_Households: 10000
 people_in_one_Household: 10
 Beta: 0.3
 BetaH: 0.9
