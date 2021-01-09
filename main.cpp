@@ -19,8 +19,11 @@ int main() {
     // number of people in one Household
     int number_of_people_in_one_Household;
 
-    //S->E
-    double beta;
+    //S->E the initial beta
+    double beta1;
+
+    //S->E after the lockdown (automatically actived when 10% of the population is recovered)
+    double beta2;
 
     //S->E in the household
     double betaH;
@@ -32,8 +35,8 @@ int main() {
     double gamma;
 
 
-    read_Parameters_From_File(inputpath, nSteps, number_of_Households, number_of_people_in_one_Household, beta, betaH,
-                              ny, gamma);
+    read_Parameters_From_File(inputpath, nSteps, number_of_Households, number_of_people_in_one_Household, beta1, beta2,
+                              betaH, ny, gamma);
 
     int N = number_of_Households * number_of_people_in_one_Household;
 
@@ -43,7 +46,7 @@ int main() {
     // tmp is the vector of the time (each entry is the time at which an event occurred)
     std::vector<double> temp;
     std::vector<std::vector<int> > SEIR = gillespie_for_Households(nSteps, N, number_of_Households,
-                                                                   number_of_people_in_one_Household, beta, betaH, ny,
+                                                                   number_of_people_in_one_Household, beta1,beta2, betaH, ny,
                                                                    gamma, temp);
 
 

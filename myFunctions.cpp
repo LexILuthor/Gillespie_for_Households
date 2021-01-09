@@ -182,7 +182,7 @@ void initializeSEIRandTemp(std::vector<std::vector<int> > &SEIR, std::vector<dou
 }
 
 void read_Parameters_From_File(std::string inputpath, int &nSteps, int &number_of_Households,
-                               int &number_of_people_in_one_Household, double &beta, double &betaH, double &ny,
+                               int &number_of_people_in_one_Household, double &beta1,double &beta2, double &betaH, double &ny,
                                double &gamma) {
 
     std::string line;
@@ -205,10 +205,15 @@ void read_Parameters_From_File(std::string inputpath, int &nSteps, int &number_o
         number_of_people_in_one_Household = std::stoi(line);
 
 
-        //beta
+        //beta1 is the initial beta
         getline(infile, line, ':');
         getline(infile, line);
-        beta = std::stod(line);
+        beta1 = std::stod(line);
+
+        //beta2 is the second beta after the start of the lockdown
+        getline(infile, line, ':');
+        getline(infile, line);
+        beta2 = std::stod(line);
 
         //betaH
         getline(infile, line, ':');

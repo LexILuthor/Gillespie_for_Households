@@ -11,7 +11,7 @@
 
 std::vector<std::vector<int> >
 gillespie_for_Households(int nSteps, int N, int number_of_Households, int number_of_people_in_one_Household,
-                         double beta, double betaH, double ny, double gamma, std::vector<double> &temp) {
+                         double beta1,double beta2, double betaH, double ny, double gamma, std::vector<double> &temp) {
     //Here you can change the seed of the generator
     std::default_random_engine generator(0);
 
@@ -37,6 +37,8 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
     initialize_household_with_Susceptible_Infected_Exposed(household_with_Susceptible_Infected_Exposed,
                                                            number_of_Households, number_of_people_in_one_Household);
 
+    double beta=beta1;
+
 
     // here we simulate the process
     int j = 1;
@@ -59,9 +61,15 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
             return SEIR;
         }
 
+        //change beta when we have 10% of the population recovered
+        // (N/100)*10
+        if(r>=(N/10)){
+            beta=beta2;
+        }
 
         // compute the parameter lambda of the exponential and the probabilities of
         // S->E, E->I, I->R
+
         double se = beta * s * i * move;
         double seH = betaH * sumsHiH / number_of_people_in_one_Household;
         double ei = ny * e;
