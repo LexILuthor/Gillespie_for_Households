@@ -22,7 +22,7 @@ int main() {
     //S->E the initial beta
     double beta1;
 
-    //S->E after the lockdown (automatically actived when 10% of the population is recovered)
+    //S->E after the lockdown (automatically actived when a certain % of the population is recovered)
     double beta2;
 
     //S->E in the household

@@ -1,8 +1,8 @@
-NumberOfSteps: 10000000
-number_of_Households: 100000
-people_in_one_Household: 10
-Beta_1: 0.7
-Beta_2: 0.3
+NumberOfSteps: 1000000
+number_of_Households: 10000
+people_in_one_Household: 30
+Beta_1: 8
+Beta_2: 0.1
 BetaH: 0.9
-Ny: 0.120
+Ny: 0.5
 Gamma: 0.2

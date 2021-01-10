@@ -63,9 +63,14 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
 
         //change beta when we have 10% of the population recovered
         // (N/100)*10
-        if(r>=(N/10)){
+        if(i>=(N/100)*8 && beta!=beta2){
             beta=beta2;
+            std::cout<<"beta dimunuisce al tempo t= "<<temp.back()<<"\n";
+        }else if(i<(N/100)*6 && beta!=beta1){
+            beta=beta1;
+            std::cout<<"beta Aumenta al tempo t= "<<temp.back()<<"\n";
         }
+
 
         // compute the parameter lambda of the exponential and the probabilities of
         // S->E, E->I, I->R
