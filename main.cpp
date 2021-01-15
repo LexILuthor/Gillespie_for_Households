@@ -25,6 +25,12 @@ int main() {
     //S->E after the lockdown (automatically actived when a certain % of the population is recovered)
     double beta2;
 
+    //the % above which the general contacts happens at ratio beta2
+    double threshold_above_which_one_to_two;
+
+    //the % under which the general contacts happens at ratio beta1
+    double threshold_under_which_two_to_one;
+
     //S->E in the household
     double betaH;
 
@@ -36,6 +42,7 @@ int main() {
 
 
     read_Parameters_From_File(inputpath, nSteps, number_of_Households, number_of_people_in_one_Household, beta1, beta2,
+                              threshold_above_which_one_to_two, threshold_under_which_two_to_one,
                               betaH, ny, gamma);
 
     int N = number_of_Households * number_of_people_in_one_Household;
@@ -46,8 +53,10 @@ int main() {
     // tmp is the vector of the time (each entry is the time at which an event occurred)
     std::vector<double> temp;
     std::vector<std::vector<int> > SEIR = gillespie_for_Households(nSteps, N, number_of_Households,
-                                                                   number_of_people_in_one_Household, beta1,beta2, betaH, ny,
-                                                                   gamma, temp);
+                                                                   number_of_people_in_one_Household, beta1, beta2,
+                                                                   threshold_above_which_one_to_two,
+                                                                   threshold_under_which_two_to_one, betaH, ny, gamma,
+                                                                   temp);
 
 
     write_the_csv_file(outputpath, SEIR, temp);

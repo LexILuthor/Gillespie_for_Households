@@ -11,7 +11,8 @@
 
 std::vector<std::vector<int> >
 gillespie_for_Households(int nSteps, int N, int number_of_Households, int number_of_people_in_one_Household,
-                         double beta1,double beta2, double betaH, double ny, double gamma, std::vector<double> &temp) {
+                         double beta1,double beta2,double threshold_above_which_one_to_two,
+                         double threshold_under_which_two_to_one, double betaH, double ny, double gamma, std::vector<double> &temp) {
     //Here you can change the seed of the generator
     std::default_random_engine generator(0);
 
@@ -62,13 +63,13 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
         }
 
         //change beta when we have 10% of the population recovered
-        // (N/100)*10
-        if(i>=(N/100)*8 && beta!=beta2){
+
+        if(i>=(N/100)*threshold_above_which_one_to_two && beta!=beta2){
             beta=beta2;
-            std::cout<<"beta dimunuisce al tempo t= "<<temp.back()<<"\n";
-        }else if(i<(N/100)*6 && beta!=beta1){
+            std::cout<<"beta decrease at time t= "<<temp.back()<<"\n";
+        }else if(i<(N/100)*threshold_under_which_two_to_one && beta!=beta1){
             beta=beta1;
-            std::cout<<"beta Aumenta al tempo t= "<<temp.back()<<"\n";
+            std::cout<<"beta increase at time t= "<<temp.back()<<"\n";
         }
 
 

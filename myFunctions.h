@@ -27,8 +27,9 @@ void new_Recovered(std::vector<std::vector<int>> &SEIR,
 void initializeSEIRandTemp(std::vector<std::vector<int>> &SEIR, std::vector<double> &temp, int &N);
 
 void read_Parameters_From_File(std::string inputpath, int &nSteps, int &number_of_Households,
-                               int &number_of_people_in_one_Household, double &beta1, double &beta2, double &betaH,
-                               double &ny, double &gamma);
+                               int &number_of_people_in_one_Household, double &beta1, double &beta2,
+                               double &threshold_above_which_one_to_two, double &threshold_under_which_two_to_one,
+                               double &betaH, double &ny, double &gamma);
 
 void write_the_csv_file(std::string outputpath, std::vector<std::vector<int> > &SEIR, std::vector<double> &temp);
 
