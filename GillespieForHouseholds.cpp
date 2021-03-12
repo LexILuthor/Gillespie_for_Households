@@ -6,15 +6,19 @@
 #include <vector>
 #include<cstdlib>
 #include <random>
+#include <time.h>
 #include "myFunctions.h"
 #include "GillespieForHouseholds.h"
 
 std::vector<std::vector<int> >
 gillespie_for_Households(int nSteps, int N, int number_of_Households, int number_of_people_in_one_Household,
-                         double beta1,double beta2,double threshold_above_which_one_to_two,
-                         double threshold_under_which_two_to_one, double betaH, double ny, double gamma, std::vector<double> &temp) {
+                         double beta1, double beta2, double threshold_above_which_one_to_two,
+                         double threshold_under_which_two_to_one, double betaH, double ny, double gamma,
+                         std::vector<double> &temp, std::vector<double> &time_lockdown) {
     //Here you can change the seed of the generator
-    std::default_random_engine generator(0);
+    std::default_random_engine generator(time(0));
+    //srand(time(0));
+    //std::default_random_engine generator;
 
 
     std::vector<std::vector<int> > SEIR(4, std::vector<int>(1, 0));
@@ -38,7 +42,7 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
     initialize_household_with_Susceptible_Infected_Exposed(household_with_Susceptible_Infected_Exposed,
                                                            number_of_Households, number_of_people_in_one_Household);
 
-    double beta=beta1;
+    double beta = beta1;
 
 
     // here we simulate the process
@@ -64,12 +68,14 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
 
         //change beta when we have 10% of the population recovered
 
-        if(i>=(N/100)*threshold_above_which_one_to_two && beta!=beta2){
-            beta=beta2;
-            std::cout<<"beta decrease at time t= "<<temp.back()<<"\n";
-        }else if(i<(N/100)*threshold_under_which_two_to_one && beta!=beta1){
-            beta=beta1;
-            std::cout<<"beta increase at time t= "<<temp.back()<<"\n";
+        if (i >= (N / 100) * threshold_above_which_one_to_two && beta != beta2) {
+            beta = beta2;
+            std::cout << "beta decrease at time t= " << temp.back() << "\n";
+            time_lockdown.push_back(temp.back());
+        } else if (i < (N / 100) * threshold_under_which_two_to_one && beta != beta1) {
+            beta = beta1;
+            std::cout << "beta increase at time t= " << temp.back() << "\n";
+            time_lockdown.push_back(temp.back());
         }
 
 

@@ -253,14 +253,34 @@ void write_the_csv_file(std::string outputpath, std::vector<std::vector<int> > &
         std::cout << "Unable to open file";
     } else {
         for (int i = 0; i < temp.size(); i++) {
+            //write only every 10
+            if (i % 100 == 0) {
+                outfile << SEIR[0][i] << ",\t" << SEIR[1][i] << ",\t" << SEIR[2][i] << ",\t" << SEIR[3][i] << ",\t"
+                        << temp[i] << "\n";
+            }
 
-            outfile << SEIR[0][i] << ",\t" << SEIR[1][i] << ",\t" << SEIR[2][i] << ",\t" << SEIR[3][i] << ",\t"
-                    << temp[i] << "\n";
-            //88574
         }
         outfile.close();
     }
 }
+
+
+void write_lock_down_files(std::string outputpath, std::vector<double> &time_lockdown) {
+    std::ofstream outfile(outputpath);
+    if (!outfile.is_open()) {
+        std::cout << "Unable to open file";
+    } else {
+        for (int i = 1; i < time_lockdown.size(); i++) {
+            if (i % 2 == 1) {
+                outfile << '\n';
+            }
+            outfile << time_lockdown[i] << " ";
+        }
+        outfile.close();
+    }
+
+}
+
 
 void initialize_household_with_Susceptible_Infected_Exposed(
         std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,

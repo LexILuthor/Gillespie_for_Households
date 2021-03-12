@@ -36,6 +36,7 @@
 *.R
 *.Rhistory
 *.csv
+InputOutput/*.txt
 cmake-build-debug/
 .idea/
 CMakeLists.txt

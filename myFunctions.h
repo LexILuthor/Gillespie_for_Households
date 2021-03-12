@@ -33,6 +33,8 @@ void read_Parameters_From_File(std::string inputpath, int &nSteps, int &number_o
 
 void write_the_csv_file(std::string outputpath, std::vector<std::vector<int> > &SEIR, std::vector<double> &temp);
 
+void write_lock_down_files(std::string outputpath, std::vector<double> &time_lockdown);
+
 void initialize_household_with_Susceptible_Infected_Exposed(
         std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
         int number_of_Households,
