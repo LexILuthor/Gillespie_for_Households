@@ -1,5 +1,8 @@
 #include <iostream>
 #include <vector>
+#include <random>
+#include <time.h>
+
 #include "myFunctions.h"
 #include "GillespieForHouseholds.h"
 
@@ -40,8 +43,14 @@ int main() {
     // I->R
     double gamma;
 
-    int tot_simulations = 100;
+    int tot_simulations = 11;
 
+    //Here you can change the seed of the generator
+    //std::default_random_engine generator(time(NULL));
+    std::default_random_engine generator(0);
+    //srand(time(0));
+    srand(5);
+    //std::default_random_engine generator;
 
     read_Parameters_From_File(inputpath, nSteps, number_of_Households, number_of_people_in_one_Household, beta1, beta2,
                               threshold_above_which_one_to_two, threshold_under_which_two_to_one,
@@ -64,7 +73,7 @@ int main() {
                                                                        number_of_people_in_one_Household, beta1, beta2,
                                                                        threshold_above_which_one_to_two,
                                                                        threshold_under_which_two_to_one, betaH, ny,
-                                                                       gamma, tempo, time_lockdown);
+                                                                       gamma, tempo, time_lockdown, generator);
 
         if (beta1 != beta2) {
             write_lock_down_files(outputpath + std::to_string(i) + "lock_down_time" + ".txt", time_lockdown);

@@ -9,16 +9,15 @@
 #include <time.h>
 #include "myFunctions.h"
 #include "GillespieForHouseholds.h"
+#include <fstream>
+#include <iomanip>
 
 std::vector<std::vector<int> >
 gillespie_for_Households(int nSteps, int N, int number_of_Households, int number_of_people_in_one_Household,
                          double beta1, double beta2, double threshold_above_which_one_to_two,
                          double threshold_under_which_two_to_one, double betaH, double ny, double gamma,
-                         std::vector<double> &temp, std::vector<double> &time_lockdown) {
-    //Here you can change the seed of the generator
-    std::default_random_engine generator(time(0));
-    //srand(time(0));
-    //std::default_random_engine generator;
+                         std::vector<double> &temp, std::vector<double> &time_lockdown,
+                         std::default_random_engine &generator) {
 
 
     std::vector<std::vector<int> > SEIR(4, std::vector<int>(1, 0));
@@ -43,6 +42,23 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
                                                            number_of_Households, number_of_people_in_one_Household);
 
     double beta = beta1;
+
+    std::exponential_distribution<double> exp_distribution(1);
+    std::uniform_real_distribution<double> uniform_Real_Distribution(0.0, 1.0);
+
+
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    //output for debugging
+    std::ofstream outfile("../Output/gillespie_Household.txt");
+    if (!outfile.is_open()) {
+        std::cout << "Unable to open file";
+    }
+    outfile.precision(4);
+
+
+    //------------------------------------------------------------------------------------------------------------------
 
 
     // here we simulate the process
@@ -83,7 +99,7 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
         // S->E, E->I, I->R
 
         double se = beta * s * i * move;
-        double seH = betaH * sumsHiH / number_of_people_in_one_Household;
+        double seH = betaH * (double) sumsHiH / (double) number_of_people_in_one_Household;
         double ei = ny * e;
         double ir = gamma * i;
         double lambda = (se + seH + ei + ir);
@@ -97,28 +113,101 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
 
 
         //generate the time of the next event with an exponential with parameter lambda
-        std::exponential_distribution<double> exp_distribution(lambda);
         double event = exp_distribution(generator);
+
+
+        event = event / lambda;
         temp.push_back(temp.back() + event);
 
 
+        //------------------------------------------------------------------------------------------------------------------
+
+        //output for debugging
+
+        if (j < 100) {
+            outfile << "time: "  << temp.back() <<  ",\t \t" << "lambda: " << lambda << ",\t \t";
+        }
+
+
+        //------------------------------------------------------------------------------------------------------------------
+
+
         //Randomly decide which event happened
-        double tmp = rand() / ((double) RAND_MAX + 1);
+        //double tmp = (double) rand() / ((double) RAND_MAX);
+        double tmp = uniform_Real_Distribution(generator);
+
         if (tmp < se) {
             //new Exposed from a contact outside the household
-            new_Exposed_outside_the_household(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
+            std::vector<int> v = new_Exposed_outside_the_household(SEIR, household_with_Susceptible_Infected_Exposed,
+                                                                   sumsHiH, j, generator);
+
+            //----------------------------------------------------------------------------------------------------------
+
+            //output for debugging
+
+            if (j < 100) {
+                outfile << "EO , household s= " << v[0] << ", e= " << v[1] << ", i= "
+                        << v[2] << ",\n";
+            }
+
+            //----------------------------------------------------------------------------------------------------------
+
         } else if (tmp < (se + seH)) {
             //new Exposed from a contact within the household
-            new_exposed_inside_the_household(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
+            std::vector<int> v = new_exposed_inside_the_household(SEIR, household_with_Susceptible_Infected_Exposed,
+                                                                  sumsHiH, j, generator);
+
+            //----------------------------------------------------------------------------------------------------------
+
+            //output for debugging
+
+            if (j < 100) {
+                outfile << "EI , household s= " << v[0] << ", e= " << v[1] << ", i= "
+                        << v[2] << ",\n";
+            }
+
+            //----------------------------------------------------------------------------------------------------------
         } else if (tmp < (se + seH + ei)) {
             //new infected
-            new_Infected(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
+            std::vector<int> v = new_Infected(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j, generator);
+
+            //----------------------------------------------------------------------------------------------------------
+
+            //output for debugging
+
+            if (j < 100) {
+                outfile << "IN , household s= " << v[0] << ", e= " << v[1] << ", i= "
+                        << v[2] << ",\n";
+            }
+
+            //----------------------------------------------------------------------------------------------------------
         } else {
             //new Recovered
-            new_Recovered(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
+            std::vector<int> v = new_Recovered(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j,
+                                               generator);
+
+            //----------------------------------------------------------------------------------------------------------
+
+            //output for debugging
+
+            if (j < 100) {
+                outfile << "RE , household s= " << v[0] << ", e= " << v[1] << ", i= "
+                        << v[2] << ",\n";
+            }
+
+            //----------------------------------------------------------------------------------------------------------
         }
         j++;
     }
+
+    //--------------------------------------------------------------------------------------------------------------
+
+    //write debugging file
+
+    outfile.close();
+
+
+    //--------------------------------------------------------------------------------------------------------------
 
     return SEIR;
 
