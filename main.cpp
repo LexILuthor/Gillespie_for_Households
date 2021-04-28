@@ -47,9 +47,11 @@ int main() {
 
     //Here you can change the seed of the generator
     //std::default_random_engine generator(time(NULL));
-    std::default_random_engine generator(0);
+    std::random_device myRandomDevice;
+    unsigned seed = myRandomDevice();
+    std::default_random_engine generator(seed);
     //srand(time(0));
-    srand(5);
+    srand(seed);
     //std::default_random_engine generator;
 
     read_Parameters_From_File(inputpath, nSteps, number_of_Households, number_of_people_in_one_Household, beta1, beta2,
