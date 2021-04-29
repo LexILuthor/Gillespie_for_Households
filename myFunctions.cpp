@@ -11,7 +11,7 @@
 #include "myFunctions.h"
 
 
-std::vector<int> new_Exposed_outside_the_household(std::vector<std::vector<int> > &SEIR,
+void new_Exposed_outside_the_household(std::vector<std::vector<int> > &SEIR,
                                        std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
                                        int &sumsHiH, int &j, std::default_random_engine &generator) {
     SEIR[0].push_back(SEIR[0][j - 1] - 1);
@@ -46,12 +46,6 @@ std::vector<int> new_Exposed_outside_the_household(std::vector<std::vector<int> 
                     // this is the rewrite of:
                     // sumsHiH = sumsHiH - (s * i) + ((s - 1) * i )
                     sumsHiH = sumsHiH - i;
-
-                    //-------------------------------------------------------------------------------------------
-                    std::vector<int> v {s,e,i};
-                    return v;
-                    //-------------------------------------------------------------------------------------------
-
                     goto skip;
 
                 }
@@ -62,7 +56,7 @@ std::vector<int> new_Exposed_outside_the_household(std::vector<std::vector<int> 
 }
 
 
-std::vector<int> new_exposed_inside_the_household(std::vector<std::vector<int>> &SEIR,
+void new_exposed_inside_the_household(std::vector<std::vector<int>> &SEIR,
                                       std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
                                       int &sumsHiH, int &j, std::default_random_engine &generator) {
     SEIR[0].push_back(SEIR[0][j - 1] - 1);
@@ -98,10 +92,6 @@ std::vector<int> new_exposed_inside_the_household(std::vector<std::vector<int>> 
                     // sumsHiH = sumsHiH - (s * i) + ((s - 1) * i )
                     sumsHiH = sumsHiH - i;
 
-                    //-------------------------------------------------------------------------------------------
-                    std::vector<int> v {s,e,i};
-                    return v;
-                    //-------------------------------------------------------------------------------------------
 
                     goto skip;
 
@@ -113,7 +103,7 @@ std::vector<int> new_exposed_inside_the_household(std::vector<std::vector<int>> 
     skip:;
 }
 
-std::vector<int> new_Infected(std::vector<std::vector<int> > &SEIR,
+void new_Infected(std::vector<std::vector<int> > &SEIR,
                   std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
                   int &sumsHiH, int &j, std::default_random_engine &generator) {
     SEIR[0].push_back(SEIR[0][j - 1]);
@@ -148,10 +138,7 @@ std::vector<int> new_Infected(std::vector<std::vector<int> > &SEIR,
                     // this is the rewrite of:
                     // sumsHiH = sumsHiH - (s * i) + (s * (i+1) )
                     sumsHiH = sumsHiH + s;
-                    //-------------------------------------------------------------------------------------------
-                    std::vector<int> v {s,e,i};
-                    return v;
-                    //-------------------------------------------------------------------------------------------
+
                     goto skip;
 
                 }
@@ -161,7 +148,7 @@ std::vector<int> new_Infected(std::vector<std::vector<int> > &SEIR,
     skip:;
 }
 
-std::vector<int> new_Recovered(std::vector<std::vector<int> > &SEIR,
+void new_Recovered(std::vector<std::vector<int> > &SEIR,
                    std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
                    int &sumsHiH, int &j, std::default_random_engine &generator) {
     SEIR[0].push_back(SEIR[0][j - 1]);
@@ -196,10 +183,7 @@ std::vector<int> new_Recovered(std::vector<std::vector<int> > &SEIR,
                     // sumsHiH = sumsHiH - (prec[0] * prec[1]) + (prec[0] * (prec[1]-1) )
                     sumsHiH = sumsHiH - s;
 
-                    //-------------------------------------------------------------------------------------------
-                    std::vector<int> v {s,e,i};
-                    return v;
-                    //-------------------------------------------------------------------------------------------
+
                     goto skip;
 
                 }

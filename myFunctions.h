@@ -8,19 +8,19 @@
 #endif //GILLESPIE_FOR_HOUSEHOLDS_MYFUNCTIONS_H
 
 
-std::vector<int> new_Exposed_outside_the_household(std::vector<std::vector<int>> &SEIR,
+void new_Exposed_outside_the_household(std::vector<std::vector<int>> &SEIR,
                                        std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
                                        int &sumsHiH, int &j,std::default_random_engine &generator);
 
-std::vector<int> new_exposed_inside_the_household(std::vector<std::vector<int>> &SEIR,
+void new_exposed_inside_the_household(std::vector<std::vector<int>> &SEIR,
                                       std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
                                       int &sumsHiH, int &j,std::default_random_engine &generator);
 
-std::vector<int> new_Infected(std::vector<std::vector<int>> &SEIR,
+void new_Infected(std::vector<std::vector<int>> &SEIR,
                   std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
                   int &sumsHiH, int &j,std::default_random_engine &generator);
 
-std::vector<int> new_Recovered(std::vector<std::vector<int>> &SEIR,
+void new_Recovered(std::vector<std::vector<int>> &SEIR,
                    std::vector<std::vector<std::vector<int>>> &household_with_Susceptible_Infected_Exposed,
                    int &sumsHiH, int &j,std::default_random_engine &generator);
 

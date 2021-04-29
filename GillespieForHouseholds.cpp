@@ -64,6 +64,7 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
     // here we simulate the process
     int j = 1;
     while (j < nSteps) {
+
         //number of Susceptible
         int s = SEIR[0][j - 1];
 
@@ -120,17 +121,6 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
         temp.push_back(temp.back() + event);
 
 
-        //------------------------------------------------------------------------------------------------------------------
-
-        //output for debugging
-
-        if (j < 100) {
-            outfile << "time: "  << temp.back() <<  ",\t \t" << "lambda: " << lambda << ",\t \t";
-        }
-
-
-        //------------------------------------------------------------------------------------------------------------------
-
 
         //Randomly decide which event happened
         //double tmp = (double) rand() / ((double) RAND_MAX);
@@ -138,76 +128,30 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
 
         if (tmp < se) {
             //new Exposed from a contact outside the household
-            std::vector<int> v = new_Exposed_outside_the_household(SEIR, household_with_Susceptible_Infected_Exposed,
+            new_Exposed_outside_the_household(SEIR, household_with_Susceptible_Infected_Exposed,
                                                                    sumsHiH, j, generator);
 
-            //----------------------------------------------------------------------------------------------------------
 
-            //output for debugging
-
-            if (j < 100) {
-                outfile << "EO , household s= " << v[0] << ", e= " << v[1] << ", i= "
-                        << v[2] << ",\n";
-            }
-
-            //----------------------------------------------------------------------------------------------------------
 
         } else if (tmp < (se + seH)) {
             //new Exposed from a contact within the household
-            std::vector<int> v = new_exposed_inside_the_household(SEIR, household_with_Susceptible_Infected_Exposed,
+            new_exposed_inside_the_household(SEIR, household_with_Susceptible_Infected_Exposed,
                                                                   sumsHiH, j, generator);
 
-            //----------------------------------------------------------------------------------------------------------
 
-            //output for debugging
-
-            if (j < 100) {
-                outfile << "EI , household s= " << v[0] << ", e= " << v[1] << ", i= "
-                        << v[2] << ",\n";
-            }
-
-            //----------------------------------------------------------------------------------------------------------
         } else if (tmp < (se + seH + ei)) {
             //new infected
-            std::vector<int> v = new_Infected(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j, generator);
+            new_Infected(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j, generator);
 
-            //----------------------------------------------------------------------------------------------------------
-
-            //output for debugging
-
-            if (j < 100) {
-                outfile << "IN , household s= " << v[0] << ", e= " << v[1] << ", i= "
-                        << v[2] << ",\n";
-            }
-
-            //----------------------------------------------------------------------------------------------------------
         } else {
             //new Recovered
-            std::vector<int> v = new_Recovered(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j,
+            new_Recovered(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j,
                                                generator);
 
-            //----------------------------------------------------------------------------------------------------------
-
-            //output for debugging
-
-            if (j < 100) {
-                outfile << "RE , household s= " << v[0] << ", e= " << v[1] << ", i= "
-                        << v[2] << ",\n";
-            }
-
-            //----------------------------------------------------------------------------------------------------------
         }
         j++;
     }
 
-    //--------------------------------------------------------------------------------------------------------------
-
-    //write debugging file
-
-    outfile.close();
-
-
-    //--------------------------------------------------------------------------------------------------------------
 
     return SEIR;
 
