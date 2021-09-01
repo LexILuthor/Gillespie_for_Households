@@ -6,14 +6,18 @@
 #include <vector>
 #include<cstdlib>
 #include <random>
+#include <time.h>
 #include "myFunctions.h"
 #include "GillespieForHouseholds.h"
+#include <fstream>
+#include <iomanip>
 
 std::vector<std::vector<int> >
 gillespie_for_Households(int nSteps, int N, int number_of_Households, int number_of_people_in_one_Household,
-                         double beta, double betaH, double ny, double gamma, std::vector<double> &temp) {
-    //Here you can change the seed of the generator
-    std::default_random_engine generator(0);
+                         double beta1, double beta2, double threshold_above_which_one_to_two,
+                         double threshold_under_which_two_to_one, double betaH, double ny, double gamma,
+                         std::vector<double> &temp, std::vector<double> &time_lockdown,
+                         std::default_random_engine &generator) {
 
 
     std::vector<std::vector<int> > SEIR(4, std::vector<int>(1, 0));
@@ -37,10 +41,30 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
     initialize_household_with_Susceptible_Infected_Exposed(household_with_Susceptible_Infected_Exposed,
                                                            number_of_Households, number_of_people_in_one_Household);
 
+    double beta = beta1;
+
+    std::exponential_distribution<double> exp_distribution(1);
+    std::uniform_real_distribution<double> uniform_Real_Distribution(0.0, 1.0);
+
+
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    //output for debugging
+    std::ofstream outfile("../Output/gillespie_Household.txt");
+    if (!outfile.is_open()) {
+        std::cout << "Unable to open file";
+    }
+    outfile.precision(4);
+
+
+    //------------------------------------------------------------------------------------------------------------------
+
 
     // here we simulate the process
     int j = 1;
     while (j < nSteps) {
+
         //number of Susceptible
         int s = SEIR[0][j - 1];
 
@@ -59,11 +83,24 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
             return SEIR;
         }
 
+        //change beta when we have 10% of the population recovered
+
+        if (i >= (N / 100) * threshold_above_which_one_to_two && beta != beta2) {
+            beta = beta2;
+            std::cout << "beta decrease at time t= " << temp.back() << "\n";
+            time_lockdown.push_back(temp.back());
+        } else if (i < (N / 100) * threshold_under_which_two_to_one && beta != beta1) {
+            beta = beta1;
+            std::cout << "beta increase at time t= " << temp.back() << "\n";
+            time_lockdown.push_back(temp.back());
+        }
+
 
         // compute the parameter lambda of the exponential and the probabilities of
         // S->E, E->I, I->R
+
         double se = beta * s * i * move;
-        double seH = betaH * sumsHiH / number_of_people_in_one_Household;
+        double seH = betaH * (double) sumsHiH / (double) number_of_people_in_one_Household;
         double ei = ny * e;
         double ir = gamma * i;
         double lambda = (se + seH + ei + ir);
@@ -77,28 +114,44 @@ gillespie_for_Households(int nSteps, int N, int number_of_Households, int number
 
 
         //generate the time of the next event with an exponential with parameter lambda
-        std::exponential_distribution<double> exp_distribution(lambda);
         double event = exp_distribution(generator);
+
+
+        event = event / lambda;
         temp.push_back(temp.back() + event);
 
 
+
         //Randomly decide which event happened
-        double tmp = rand() / ((double) RAND_MAX + 1);
+        //double tmp = (double) rand() / ((double) RAND_MAX);
+        double tmp = uniform_Real_Distribution(generator);
+
         if (tmp < se) {
             //new Exposed from a contact outside the household
-            new_Exposed_outside_the_household(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
+            new_Exposed_outside_the_household(SEIR, household_with_Susceptible_Infected_Exposed,
+                                                                   sumsHiH, j, generator);
+
+
+
         } else if (tmp < (se + seH)) {
             //new Exposed from a contact within the household
-            new_exposed_inside_the_household(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
+            new_exposed_inside_the_household(SEIR, household_with_Susceptible_Infected_Exposed,
+                                                                  sumsHiH, j, generator);
+
+
         } else if (tmp < (se + seH + ei)) {
             //new infected
-            new_Infected(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
+            new_Infected(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j, generator);
+
         } else {
             //new Recovered
-            new_Recovered(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j);
+            new_Recovered(SEIR, household_with_Susceptible_Infected_Exposed, sumsHiH, j,
+                                               generator);
+
         }
         j++;
     }
+
 
     return SEIR;
 
